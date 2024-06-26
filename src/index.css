@@ -1,5 +1,10 @@
 body {
   margin-top: 20px;
+  margin: 0;
+  padding: 0;
   display: flex;
   justify-content: center;
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
 }

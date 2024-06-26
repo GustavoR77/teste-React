@@ -1,101 +1,108 @@
 import { useEffect, useState } from "react";
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
 function App() {
-  const [users, setUsers] = useState([]);
+  const [activeTable, setActiveTable] = useState(true);
+
+  const [clients, setClients] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const switchTable = () => {
+    setActiveTable(!activeTable);
+  };
+
   useEffect(() => {
     setLoading(true);
     fetch("http://localhost:14000/clients")
       .then((response) => response.json())
-      .then((json) => setUsers(json))
+      .then((json) => setClients(json))
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("http://localhost:14000/companies")
+      .then((response) => response.json())
+      .then((json) => setCompanies(json))
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
   return (
-    <div className="App">
+    <div class="d-flex p-3" className="App">
       {loading ? (
         <div>Loading...</div>
       ) : (
         <>
-          <h1>Usuários</h1>
-          {/* <table border={1}>
-            <tr>
-              <th>Nome</th>
-              <th>Data de Nascimento</th>
-              <th>CPF</th>
-              <th>Endereço</th>
-              <th>Status</th>
-            </tr>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.birth_date}</td>
-                <td>{user.cpf}</td>
-                <td>{user.address}</td>
-                <td>{user.status}</td>
-              </tr>
-            ))}
-          </table> */}
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Nome</StyledTableCell>
-                  <StyledTableCell align="right">Data de Nascimento</StyledTableCell>
-                  <StyledTableCell align="right">CPF</StyledTableCell>
-                  <StyledTableCell align="right">Endereço</StyledTableCell>
-                  <StyledTableCell align="right">Status</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((row) => (
-                  <StyledTableRow key={row.name}>
-                    <StyledTableCell component="th" scope="row">
-                      {row.name}
-                    </StyledTableCell>
-                    <StyledTableCell align="right">{row.birth_date}</StyledTableCell>
-                    <StyledTableCell align="right">{row.cpf}</StyledTableCell>
-                    <StyledTableCell align="right">{row.address}</StyledTableCell>
-                    <StyledTableCell align="right">{row.address}</StyledTableCell>
-                  </StyledTableRow>
+          <div class={activeTable == false ? "d-none" : "d-flex flex-column"}>
+            <h1 class="text-center">Clientes</h1>
+            <table class="table text-center align-middle w-100 mt-3">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Data de Nascimento</th>
+                  <th scope="col">CPF</th>
+                  <th scope="col">Endereço</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clients.map((client) => (
+                  <tr key={client.id}>
+                    <td class="align-middle">{client.name}</td>
+                    <td class="align-middle">{client.birth_date}</td>
+                    <td class="align-middle">{client.cpf}</td>
+                    <td class="w-50 align-middle">{client.address}</td>
+                    <td class="align-middle">{client.status}</td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onClick={switchTable}
+              >
+                Empresas
+              </button>
+            </div>
+          </div>
+          <div class={activeTable == false ? "d-flex flex-column" : "d-none"}>
+            <h1 class="text-center">Empresas</h1>
+            <table class="table text-center align-middle w-100 mt-3">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Empresa</th>
+                  <th scope="col">Nome Fantasia</th>
+                  <th scope="col">Endereço</th>
+                  <th scope="col">Capital</th>
+                </tr>
+              </thead>
+              <tbody>
+                {companies.map((company) => (
+                  <tr key={company.id}>
+                    <td class="align-middle">{company.corporate_name}</td>
+                    <td class="align-middle">{company.fantasy_name}</td>
+                    <td class="align-middle">{company.address}</td>
+                    <td class="align-middle">{company.monetary_capital}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onClick={switchTable}
+              >
+                Clientes
+              </button>
+            </div>
+          </div>
         </>
       )}
     </div>
