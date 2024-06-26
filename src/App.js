@@ -5,7 +5,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    //fetch("https://jsonplaceholder.typicode.com/users")
     fetch("http://localhost:14000/clients")
       .then((response) => response.json())
       .then((json) => setUsers(json))
